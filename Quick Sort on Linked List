@@ -1,0 +1,269 @@
+//in c
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for linked list node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to print linked list
+void printList(struct Node* head) {
+    while (head) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+// Function to append a new node at the end
+void appendNode(struct Node** head, int newData) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = newData;
+    newNode->next = NULL;
+
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    struct Node* temp = *head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+// Function to get the last node of the linked list
+struct Node* getTail(struct Node* cur) {
+    while (cur != NULL && cur->next != NULL) {
+        cur = cur->next;
+    }
+    return cur;
+}
+
+// Partition function for QuickSort
+struct Node* partitionLast(struct Node* start, struct Node* end, struct Node** newHead, struct Node** newEnd) {
+    struct Node* pivot = end;
+    struct Node *prev = NULL, *cur = start, *tail = pivot;
+
+    // New head and end pointers
+    *newHead = NULL;
+    *newEnd = pivot;
+
+    struct Node* temp = NULL;
+    while (cur != pivot) {
+        if (cur->data < pivot->data) {
+            if (*newHead == NULL)
+                *newHead = cur;
+            prev = cur;
+            cur = cur->next;
+        } else {
+            if (prev)
+                prev->next = cur->next;
+            temp = cur->next;
+            cur->next = NULL;
+            tail->next = cur;
+            tail = cur;
+            cur = temp;
+        }
+    }
+
+    if (*newHead == NULL)
+        *newHead = pivot;
+
+    return pivot;
+}
+
+// Recursive QuickSort for linked list
+struct Node* quickSortRecur(struct Node* head, struct Node* end) {
+    if (!head || head == end)
+        return head;
+
+    struct Node* newHead = NULL, *newEnd = NULL;
+
+    struct Node* pivot = partitionLast(head, end, &newHead, &newEnd);
+
+    if (newHead != pivot) {
+        struct Node* temp = newHead;
+        while (temp->next != pivot)
+            temp = temp->next;
+        temp->next = NULL;
+
+        newHead = quickSortRecur(newHead, temp);
+
+        temp = getTail(newHead);
+        temp->next = pivot;
+    }
+
+    pivot->next = quickSortRecur(pivot->next, newEnd);
+
+    return newHead;
+}
+
+// Function to sort the linked list using QuickSort
+void quickSort(struct Node** headRef) {
+    *headRef = quickSortRecur(*headRef, getTail(*headRef));
+}
+
+// Main function to test the QuickSort on linked list
+int main() {
+    struct Node* head = NULL;
+
+    appendNode(&head, 30);
+    appendNode(&head, 3);
+    appendNode(&head, 4);
+    appendNode(&head, 20);
+    appendNode(&head, 5);
+
+    printf("Original List:\n");
+    printList(head);
+
+    quickSort(&head);
+
+    printf("\nSorted List:\n");
+    printList(head);
+
+    return 0;
+}
+
+
+//in c++
+
+
+#include <iostream>
+using namespace std;
+
+// Structure for a linked list node
+struct Node {
+    int data;
+    Node* next;
+    
+    Node(int val) {
+        data = val;
+        next = NULL;
+    }
+};
+
+// Function to print linked list
+void printList(Node* head) {
+    while (head) {
+        cout << head->data << " -> ";
+        head = head->next;
+    }
+    cout << "NULL" << endl;
+}
+
+// Function to append a new node at the end
+void appendNode(Node*& head, int newData) {
+    Node* newNode = new Node(newData);
+    
+    if (!head) {
+        head = newNode;
+        return;
+    }
+
+    Node* temp = head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+// Function to get the last node of the linked list
+Node* getTail(Node* cur) {
+    while (cur != NULL && cur->next != NULL) {
+        cur = cur->next;
+    }
+    return cur;
+}
+
+// Partition function for QuickSort
+Node* partitionLast(Node* start, Node* end, Node** newHead, Node** newEnd) {
+    Node* pivot = end;
+    Node *prev = NULL, *cur = start, *tail = pivot;
+
+    // New head and end pointers
+    *newHead = NULL;
+    *newEnd = pivot;
+
+    Node* temp = NULL;
+    while (cur != pivot) {
+        if (cur->data < pivot->data) {
+            if (*newHead == NULL)
+                *newHead = cur;
+            prev = cur;
+            cur = cur->next;
+        } else {
+            if (prev)
+                prev->next = cur->next;
+            temp = cur->next;
+            cur->next = NULL;
+            tail->next = cur;
+            tail = cur;
+            cur = temp;
+        }
+    }
+
+    if (*newHead == NULL)
+        *newHead = pivot;
+
+    return pivot;
+}
+
+// Recursive QuickSort for linked list
+Node* quickSortRecur(Node* head, Node* end) {
+    if (!head || head == end)
+        return head;
+
+    Node* newHead = NULL, *newEnd = NULL;
+
+    Node* pivot = partitionLast(head, end, &newHead, &newEnd);
+
+    if (newHead != pivot) {
+        Node* temp = newHead;
+        while (temp->next != pivot)
+            temp = temp->next;
+        temp->next = NULL;
+
+        newHead = quickSortRecur(newHead, temp);
+
+        temp = getTail(newHead);
+        temp->next = pivot;
+    }
+
+    pivot->next = quickSortRecur(pivot->next, newEnd);
+
+    return newHead;
+}
+
+// Function to sort the linked list using QuickSort
+void quickSort(Node*& head) {
+    head = quickSortRecur(head, getTail(head));
+}
+
+// Main function to test the QuickSort on linked list
+int main() {
+    Node* head = NULL;
+
+    appendNode(head, 30);
+    appendNode(head, 3);
+    appendNode(head, 4);
+    appendNode(head, 20);
+    appendNode(head, 5);
+
+    cout << "Original List:" << endl;
+    printList(head);
+
+    quickSort(head);
+
+    cout << "\nSorted List:" << endl;
+    printList(head);
+
+    return 0;
+}
+
